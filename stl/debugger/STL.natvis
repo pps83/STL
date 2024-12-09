@@ -1112,8 +1112,10 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
   <Type Name="std::basic_string_view&lt;*,*&gt;">
     <Intrinsic Name="size" Expression="_Mysize" />
     <Intrinsic Name="data" Expression="_Mydata" />
-    <DisplayString>{_Mydata,[_Mysize]}</DisplayString>
-    <StringView>_Mydata,[_Mysize]</StringView>
+    <DisplayString Condition="sizeof(*_Mydata)!=2">{_Mydata,[_Mysize]na}</DisplayString>
+    <DisplayString Condition="sizeof(*_Mydata)==2">{_Mydata,[_Mysize]su}</DisplayString>
+    <StringView Condition="sizeof(*_Mydata)!=2">_Mydata,[_Mysize]na</StringView>
+    <StringView Condition="sizeof(*_Mydata)==2">_Mydata,[_Mysize]su</StringView>
     <Expand>
       <Item Name="[size]" ExcludeView="simple">size()</Item>
       <ArrayItems>
@@ -1125,7 +1127,10 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
   <!-- This is for _ITERATOR_DEBUG_LEVEL == 0 and must have lower priority. -->
   <Type Name="std::_String_view_iterator&lt;*&gt;" Priority="MediumLow">
-    <SmartPointer Usage="Indexable">_Myptr</SmartPointer>
+    <DisplayString Condition="sizeof(*_Myptr)!=2">{_Myptr,na}</DisplayString>
+    <DisplayString Condition="sizeof(*_Myptr)==2">{_Myptr,su}</DisplayString>
+    <StringView Condition="sizeof(*_Myptr)!=2">_Myptr,na</StringView>
+    <StringView Condition="sizeof(*_Myptr)==2">_Myptr,su</StringView>
     <Expand>
       <Item Name="[ptr]">_Myptr</Item>
     </Expand>
@@ -1133,11 +1138,15 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
   <!-- This is for _ITERATOR_DEBUG_LEVEL != 0 and must have higher priority. -->
   <Type Name="std::_String_view_iterator&lt;*&gt;" Priority="Medium">
-    <SmartPointer Usage="Indexable">_Mydata + _Myoff</SmartPointer>
+    <DisplayString Condition="sizeof(*_Mydata)!=2">{_Mydata + _Myoff,[_Mysize - _Myoff]na}</DisplayString>
+    <DisplayString Condition="sizeof(*_Mydata)==2">{_Mydata + _Myoff,[_Mysize - _Myoff]su}</DisplayString>
+    <StringView Condition="sizeof(*_Mydata)!=2">_Mydata + _Myoff,[_Mysize - _Myoff]na</StringView>
+    <StringView Condition="sizeof(*_Mydata)==2">_Mydata + _Myoff,[_Mysize - _Myoff]su</StringView>
     <Expand>
       <Item Name="[ptr]">_Mydata + _Myoff</Item>
       <Item Name="[offset]">_Myoff</Item>
-      <Item Name="[string_view]">_Mydata,[_Mysize]</Item>
+      <Item Name="[string_view]" Condition="sizeof(*_Mydata)!=2">_Mydata,[_Mysize]na</Item>
+      <Item Name="[string_view]" Condition="sizeof(*_Mydata)==2">_Mydata,[_Mysize]su</Item>
     </Expand>
   </Type>
 
